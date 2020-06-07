@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 必须加上下面这行，否则会报错"文档根元素 "mapper" 必须匹配 DOCTYPE 根 "null"" -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 使用自动补全时，mapper会自动添加xmlns属性，必须删除掉，否则启动会报错 -->
+<mapper namespace="com.yifan.spring.boot.mybatis.xml.mapper.TeacherMapper">
+    <resultMap id="teacher" type="com.yifan.spring.boot.mybatis.xml.model.Teacher">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <!-- MyBatis中的集合，用于实现一对多的嵌套查询，这里的column="id"中的id表示第4行的teacher的id -->
+        <!-- select="selectCoursesByTeacherId"指定了要用哪个语句来查询course表 -->
+        <collection property="courses" ofType="com.yifan.spring.boot.mybatis.xml.model.Course" select="selectCoursesByTeacherId" column="id">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="teacherId" column="teacher_id" />
+        </collection>
+    </resultMap>
+    <!-- 必须用resultMap来构建course，否则获得的结果teacher中course的teacherId不会被填充 -->
+    <resultMap id="course" type="com.yifan.spring.boot.mybatis.xml.model.Course">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="teacherId" column="teacher_id" />
+    </resultMap>
+
+    <!-- 注意此处指定resultMap="course" -->
+    <select id="selectCoursesByTeacherId" resultMap="course">
+        SELECT * FROM course
+        WHERE teacher_id = #{id}
+    </select>
+
+    <!-- 返回值是List时，不能把resultType指定为java.util.List，而是要指定为List中的元素的类型 -->
+    <!-- 不能使用多表联查来查询teachers，否则会返回多条teacher相同的记录 -->
+    <select id="listTeachers" resultMap="teacher">
+        SELECT * FROM teacher
+    </select>
+
+    <select id="getTeacherById" resultMap="teacher">
+        SELECT * FROM teacher
+        WHERE id = #{id}
+    </select>
+
+    <select id="getTeacherByColumn" resultMap="teacher">
+        SELECT * FROM teacher
+        WHERE ${column} = #{value}
+    </select>
+
+    <insert id="insertTeacher">
+        INSERT INTO teacher (name)
+        VALUES (#{teacher.name})
+    </insert>
+
+    <update id="updateTeacher">
+        UPDATE teacher SET
+        name = #{teacher.name}
+        WHERE id = #{teacher.id}
+    </update>
+
+    <delete id="deleteTeacherById">
+        DELETE FROM teacher
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

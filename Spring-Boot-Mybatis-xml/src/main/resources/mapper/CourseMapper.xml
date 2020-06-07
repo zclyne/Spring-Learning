@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 必须加上下面这行，否则会报错"文档根元素 "mapper" 必须匹配 DOCTYPE 根 "null"" -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 使用自动补全时，mapper会自动添加xmlns属性，必须删除掉，否则启动会报错 -->
+<mapper namespace="com.yifan.spring.boot.mybatis.xml.mapper.CourseMapper">
+    <resultMap id="course" type="com.yifan.spring.boot.mybatis.xml.model.Course">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="teacherId" column="teacher_id" />
+    </resultMap>
+
+    <!-- 返回值是List时，不能把resultType指定为java.util.List，而是要指定为List中的元素的类型 -->
+    <select id="listCourses" resultMap="course">
+        SELECT * FROM course
+    </select>
+    <select id="getCourseById" resultMap="course">
+        SELECT * FROM course WHERE id = #{id}
+    </select>
+    <!-- ${}表示告诉MyBatis不要转义字符串，因此${column}会被直接替换，而#{value}则对应于JDBC中的? -->
+    <select id="getCourseByColumn" resultMap="course">
+        SELECT * FROM course WHERE ${column} = #{value}
+    </select>
+
+    <!-- 动态SQL -->
+    <select id="getCourse" resultMap="course">
+        SELECT * FROM course
+        <where>
+            <if test="course.name != null">
+                name = #{course.name}
+            </if>
+            <if test="course.teacherId != null">
+                AND teacher_id = #{course.teacherId}
+            </if>
+        </where>
+    </select>
+    
+    <insert id="insertCourse">
+        INSERT INTO course (name, teacher_id)
+        VALUES (#{course.name}, #{course.teacherId})
+    </insert>
+
+    <update id="updateCourse">
+        UPDATE course SET
+        name = #{course.name},
+        teacher_id = #{course.teacherId}
+        WHERE id = #{course.id}
+    </update>
+
+    <delete id="deleteCourseById">
+        DELETE FROM course
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
