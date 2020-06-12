@@ -4,6 +4,8 @@
 
 这个Demo展示的是基础的使用Spring Security框架的用户名密码认证。用户名和密码来自于MySQL数据库，所有API接收的请求以及返回值都是JSON。
 
+该Demo中的/admin-only API展示了基本的使用注解方式实现方法授权。只有拥有ROLE_ADMIN权限的用户才能够访问这个API。更复杂的API访问需要自定义Filter来实现。
+
 ### 项目框架
 
 - Spring Boot

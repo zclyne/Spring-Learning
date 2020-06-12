@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -30,6 +31,8 @@ import java.io.PrintWriter;
 
 @Configuration
 @EnableWebSecurity
+// 需要添加下面这个注解来启用@Secured
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -76,7 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     // 获取自定义的filter
     @Bean
-    UsernamePasswordJsonFilter getUsernamePasswordJsonFilter() throws Exception {
+    protected UsernamePasswordJsonFilter getUsernamePasswordJsonFilter() throws Exception {
         UsernamePasswordJsonFilter filter = new UsernamePasswordJsonFilter();
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
             @Override

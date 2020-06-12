@@ -4,6 +4,7 @@ import com.yifan.springsecurity.database.json.model.APIResponse;
 import com.yifan.springsecurity.database.json.model.User;
 import com.yifan.springsecurity.database.json.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,6 +64,13 @@ public class HomeController {
         } else {
             return "redirect:signup/error";
         }
+    }
+
+    @GetMapping("/admin-only")
+    @Secured("ROLE_ADMIN")
+    // 也可以使用@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public APIResponse adminOnly() {
+        return new APIResponse(4, "This page is admin-only.");
     }
 
     // 设定已认证的user，并设置session
